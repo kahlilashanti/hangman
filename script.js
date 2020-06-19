@@ -1,7 +1,7 @@
 //grab the elements by id
 const wordEl = document.getElementById('word');
 const wrongLettersEl = document.getElementById('wrong-letters');
-const playAgainBtn = document.getElementById('play-again');
+const playAgainBtn = document.getElementById('play-button');
 const popup = document.getElementById('popup-container');
 const notification = document.getElementById('notification-container');
 const finalMessage = document.getElementById('final-message');
@@ -14,7 +14,7 @@ const words = ['priority', 'barbecue', 'olives', 'vulture', 'beautiful', 'dinosa
 
 
 //loop through the words and choose one and assign it to a variable
-const selectedWord = words[Math.floor(Math.random() * words.length)];
+let selectedWord = words[Math.floor(Math.random() * words.length)];
 
 //test that out
 // console.log(selectedWord);
@@ -51,7 +51,29 @@ function displayWord() {
 
 //update wrong lettes element
 function updateWrongLettersEl() {
-    console.log('update wrong')
+    // console.log('update wrong')
+    //display wrong letters
+    wrongLettersEl.innerHTML = `
+    ${ wrongLetters.length > 0 ? '<p>Wrong</p>' : ''}
+    ${ wrongLetters.map(letter => `<span>${letter}</span>`)}
+    `;
+
+    //display parts - loop through figureParts with a forEach
+    figureParts.forEach((part, index) => {
+        const errors = wrongLetters.length;
+
+        if (index < errors) {
+            part.style.display = 'block';
+        } else {
+            part.style.display = 'none';
+        }
+    });
+
+    //check if the user lost the game
+    if (wrongLetters.length === figureParts.length) {
+        finalMessage.innerText = 'Sorry you lost. 😂';
+        popup.style.display = 'flex';
+    }
 }
 
 //show notification
@@ -94,6 +116,21 @@ window.addEventListener('keydown', e => {
             }
         }
     }
+});
+
+//add event listener for restart game and play again
+//grab DOM element 
+playAgainBtn.addEventListener('click', () => {
+    //empty the correct and wrong arrays
+    correctLetters.splice(0);
+    wrongLetters.splice(0);
+
+    //get a random word for the next play
+    selectedWord = words[Math.floor(Math.random() * words.length)];
+
+    displayWord();
+    updateWrongLettersEl();
+    popup.style.display = 'none';
 });
 
 displayWord()
